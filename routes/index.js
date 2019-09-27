@@ -6,6 +6,11 @@ let slackClient = require(ROOT_PATH + "/generics/helpers/slackCommunications");
 const fs = require("fs");
 const inputValidator = require(ROOT_PATH + "/generics/middleware/validator");
 
+const {
+  performance
+} = require('perf_hooks');
+
+
 module.exports = function (app) {
 
   const applicationBaseUrl = process.env.APPLICATION_BASE_URL || "/assessment/"
@@ -33,7 +38,18 @@ module.exports = function (app) {
         if (validationError.length)
           throw { status: 400, message: validationError }
 
+        let start = performance.now();
+
         var result = await controllers[req.params.version][req.params.controller][req.params.method](req);
+
+        let end = performance.now();
+        console.log((end - start), "ms");
+
+        const performanceLogsFolder = `./public/performance_logs/`;
+        if (!fs.existsSync(performanceLogsFolder)) fs.mkdirSync(performanceLogsFolder);
+
+        const fileToPerformanceErrorLogs = `./public/${performanceLogsFolder}/`;
+        if (!fs.existsSync(fileToPerformanceErrorLogs)) fs.mkdirSync(fileToPerformanceErrorLogs);
 
         if (result.isResponseAStream == true) {
           // Check if file specified by the filePath exists 
@@ -78,6 +94,7 @@ module.exports = function (app) {
           console.log(result);
           console.log('-------------------Response log ends here-------------------');
         }
+
       }
       catch (error) {
         res.status(error.status ? error.status : 400).json({
