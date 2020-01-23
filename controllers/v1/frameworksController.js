@@ -280,7 +280,7 @@ module.exports = class Frameworks extends Abstract {
           status: error.status || httpStatusCode.internal_server_error.status,
           message: error.message || httpStatusCode.internal_server_error.message,
           errorObject: error
-        })
+        });
       }
     })
   }
