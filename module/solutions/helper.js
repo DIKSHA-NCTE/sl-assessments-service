@@ -780,7 +780,7 @@ module.exports = class SolutionsHelper {
             ) {
               
               let organisationAndRootOrganisation = 
-              await shikshalokamHelper.getUserOrganisation(
+              await shikshalokamHelper.getOrganisationsAndRootOrganisations(
                 token,
                 userId
               );
