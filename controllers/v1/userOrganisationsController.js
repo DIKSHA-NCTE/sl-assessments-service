@@ -9,9 +9,8 @@
     * UserOrganisation
     * @class
 */
-module.exports = class UserOrganisations extends Abstract {
+module.exports = class UserOrganisations {
     constructor() {
-        super(userOrganisationsSchema);
     }
 
     static get name() {
