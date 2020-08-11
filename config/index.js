@@ -117,8 +117,10 @@ db_connect(configuration);
 
 kafka_connect(configuration);
 
-cassandra_connect(configuration.DB_Config.connection.cassandra);
+// Commented out temporarily.
 
-elasticsearch_connect(configuration.DB_Config.connection.elasticSearch);
+// cassandra_connect(configuration.DB_Config.connection.cassandra);
+
+// elasticsearch_connect(configuration.DB_Config.connection.elasticSearch);
 
 module.exports = configuration;
