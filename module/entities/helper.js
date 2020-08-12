@@ -89,7 +89,7 @@ module.exports = class EntitiesHelper {
                     throw messageConstants.apiResponses.ENTITY_INFORMATION_NOT_INSERTED;
                 }
                
-                await this.pushEntitiesToElasticSearch(entities);
+                // await this.pushEntitiesToElasticSearch(entities);
 
                 return resolve(entityData);
 
@@ -574,7 +574,7 @@ module.exports = class EntitiesHelper {
                             solutionsData[singleEntity._solutionId].newEntities.push(newEntity._id);
                         }
                         
-                        await this.pushEntitiesToElasticSearch([singleEntity["_SYSTEM_ID"]]);
+                        // await this.pushEntitiesToElasticSearch([singleEntity["_SYSTEM_ID"]]);
 
 
                         return singleEntity;
@@ -654,7 +654,7 @@ module.exports = class EntitiesHelper {
                         singleEntity["UPDATE_STATUS"] = "No information to update.";
                     }
                     
-                    await this.pushEntitiesToElasticSearch([singleEntity["_SYSTEM_ID"]]);
+                    // await this.pushEntitiesToElasticSearch([singleEntity["_SYSTEM_ID"]]);
 
                     return singleEntity;
 
@@ -722,7 +722,7 @@ module.exports = class EntitiesHelper {
                     }))
                 }
 
-                await this.pushEntitiesToElasticSearch(entities);
+                // await this.pushEntitiesToElasticSearch(entities);
 
                 this.entityMapProcessData = {};
                 
