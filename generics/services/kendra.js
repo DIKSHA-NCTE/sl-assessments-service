@@ -30,7 +30,7 @@ const getDownloadableUrl = function (bodyData) {
         bodyData.bucketName = process.env.AWS_BUCKET_NAME;
     } else {
         fileDownloadUrl = fileDownloadUrl + messageConstants.endpoints.DOWNLOADABLE_AZURE_URL;
-        bodyData.bucketName = process.env.AZURE_STORAGE_CONTAINER;
+        bodyData.containerName = process.env.AZURE_STORAGE_CONTAINER;
     }
 
     return new Promise((resolve, reject) => {
