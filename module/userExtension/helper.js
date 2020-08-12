@@ -402,7 +402,7 @@ module.exports = class UserExtensionHelper {
 
                         }
 
-                        await this.pushUserToElasticSearch(user._doc);
+                        // await this.pushUserToElasticSearch(user._doc);
 
                     } catch (error) {
                         userRole.status = (error && error.message) ? error.message : error;
