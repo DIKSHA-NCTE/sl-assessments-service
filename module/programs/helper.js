@@ -150,14 +150,12 @@ module.exports = class ProgramsHelper {
             "keywords 2"
           ],
           "concepts" : [],
-          "createdFor" : [ 
-              "0125747659358699520", 
-              "0125748495625912324"
-          ],
           "imageCompression" : {
               "quality" : 10
           },
           "components" : [],
+          "createdFor" : data.createdFor,
+          "rootOrganisations" : data.rootOrganisations,
           "isAPrivateProgram" : data.isAPrivateProgram ? data.isAPrivateProgram : false  
         }
 
