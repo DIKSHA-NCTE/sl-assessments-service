@@ -46,11 +46,11 @@ let db_connect = function(configData) {
   * Currently not required
 */
 
-// let elasticsearch_connect = function (elasticSearchConfigurations) {
-//   global.elasticsearch = require("./db/elasticSearch")(
-//     elasticSearchConfigurations
-//   );
-// };
+let elasticsearch_connect = function (elasticSearchConfigurations) {
+  global.elasticsearch = require("./db/elasticSearch")(
+    elasticSearchConfigurations
+  );
+};
 
 /**
   * Kafka connection information.
@@ -123,6 +123,6 @@ kafka_connect(configuration);
 
 // cassandra_connect(configuration.DB_Config.connection.cassandra);
 
-// elasticsearch_connect(configuration.DB_Config.connection.elasticSearch);
+elasticsearch_connect(configuration.DB_Config.connection.elasticSearch);
 
 module.exports = configuration;
