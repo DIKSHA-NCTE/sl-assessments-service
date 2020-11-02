@@ -28,20 +28,22 @@ let db_connect = function(configData) {
   * @method
   * @name cassandra_connect
   * @param {Object} cassandraConfigurationData  - configuration data for cassandra.
+  * Currently not required.
 */
 
-let cassandra_connect = function (cassandraConfigurationData) {
-  global.cassandraDatabase = require("./db/cassandra")(cassandraConfigurationData);
-  if( !global.Abstract ){
-    global.Abstract = require("../generics/abstract");
-  }
-};
+// let cassandra_connect = function (cassandraConfigurationData) {
+//   global.cassandraDatabase = require("./db/cassandra")(cassandraConfigurationData);
+//   if( !global.Abstract ){
+//     global.Abstract = require("../generics/abstract");
+//   }
+// };
 
 /**
   * Elastic search configuration.
   * @function
   * @name elasticsearch_connect
   * @param {Object} elasticSearchConfigurations  - elastic search configuration.
+  * Currently not required
 */
 
 let elasticsearch_connect = function (elasticSearchConfigurations) {
@@ -117,7 +119,9 @@ db_connect(configuration);
 
 kafka_connect(configuration);
 
-cassandra_connect(configuration.DB_Config.connection.cassandra);
+// Commented out temporarily
+
+// cassandra_connect(configuration.DB_Config.connection.cassandra);
 
 elasticsearch_connect(configuration.DB_Config.connection.elasticSearch);
 
