@@ -243,11 +243,11 @@ let enviromentVariables = {
     "message" : "Required user profile fetch API endpoint",
     "optional" : true
   },
-  "USE_USER_ORGANISATION_ID_FILTER" : {
-    "message" : "Required",
-    "optional" : true,
-    "default" : "OFF" 
-  }
+  // "USE_USER_ORGANISATION_ID_FILTER" : {
+  //   "message" : "Required",
+  //   "optional" : true,
+  //   "default" : "OFF" 
+  // }
 }
 
 let success = true;
