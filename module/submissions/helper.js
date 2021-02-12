@@ -1898,10 +1898,11 @@ module.exports = class SubmissionsHelper {
    * @name addAppInformation
    * @param {String} submissionId - submission id.
    * @param {Object} appInformation - App information
+   * @param {String} modelName - submission model
    * @returns {JSON} Updated appInformation message
    */
 
-  static addAppInformation( submissionId,appInformation ) {
+  static addAppInformation( submissionId,appInformation,modelName ) {
     return new Promise(async (resolve, reject) => {
         try {
 
