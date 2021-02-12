@@ -230,6 +230,28 @@ module.exports = class SurveySubmissions extends Abstract {
           false
         );
 
+        let appInformation = {};
+
+        if( req.headers["x-app-id"] || req.headers.appname ) {
+          appInformation["appName"] = 
+          req.headers["x-app-id"] ? req.headers["x-app-id"] :
+          req.headers.appname;
+        } 
+  
+        if( req.headers["x-app-ver"] || req.headers.appversion ) {
+          appInformation["appVersion"] = 
+          req.headers["x-app-ver"] ? req.headers["x-app-ver"] :
+          req.headers.appversion;
+        }
+
+        if( Object.keys(appInformation).length > 0 ) {
+          await submissionsHelper.addAppInformation(
+            req.params._id,
+            appInformation,
+            messageConstants.common.SURVEY_SUBMISSIONS
+          );
+        }
+
         if (response.result.status && response.result.status === messageConstants.common.SUBMISSION_STATUS_COMPLETED) {
             await surveySubmissionsHelper.pushCompletedSurveySubmissionForReporting(req.params._id);
         }

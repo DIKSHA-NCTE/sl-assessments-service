@@ -271,19 +271,6 @@ module.exports = class ObservationSubmissions extends Abstract {
       submissionDocument.evidencesStatus = Object.values(submissionDocumentEvidences);
       submissionDocument.criteria = submissionDocumentCriterias;
       submissionDocument.submissionNumber = lastSubmissionNumber;
-      submissionDocument.appInformation = {};
-
-      if( req.headers["x-app-id"] || req.headers.appname ) {
-        submissionDocument.appInformation["appName"] = 
-        req.headers["x-app-id"] ? req.headers["x-app-id"] :
-        req.headers.appname;
-      } 
-
-      if( req.headers["x-app-ver"] || req.headers.appversion ) {
-        submissionDocument.appInformation["appVersion"] = 
-        req.headers["x-app-ver"] ? req.headers["x-app-ver"] :
-        req.headers.appversion;
-      }
 
       let newObservationSubmissionDocument = await database.models.observationSubmissions.create(submissionDocument);
 
@@ -512,7 +499,33 @@ module.exports = class ObservationSubmissions extends Abstract {
            throw new Error(messageConstants.apiResponses.MULTIPLE_SUBMISSIONS_NOT_ALLOWED)
         }
 
-        let response = await submissionsHelper.createEvidencesInSubmission(req, "observationSubmissions", false);
+        let response = await submissionsHelper.createEvidencesInSubmission(
+          req, 
+          "observationSubmissions", 
+          false
+        );
+
+        let appInformation = {};
+
+        if( req.headers["x-app-id"] || req.headers.appname ) {
+          appInformation["appName"] = 
+          req.headers["x-app-id"] ? req.headers["x-app-id"] :
+          req.headers.appname;
+        } 
+  
+        if( req.headers["x-app-ver"] || req.headers.appversion ) {
+          appInformation["appVersion"] = 
+          req.headers["x-app-ver"] ? req.headers["x-app-ver"] :
+          req.headers.appversion;
+        }
+
+        if( Object.keys(appInformation).length > 0 ) {
+          await submissionsHelper.addAppInformation(
+            req.params._id,
+            appInformation,
+            "observationSubmissions"
+          );
+        }
 
         if (response.result.status && response.result.status === "completed") {
           await observationSubmissionsHelper.pushCompletedObservationSubmissionForReporting(req.params._id);
