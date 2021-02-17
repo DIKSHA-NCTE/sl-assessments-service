@@ -1772,7 +1772,7 @@ module.exports = class Solutions extends Abstract {
     /**
    * Delete Criteria From Solution.
    * @method
-   * @name uploadThemes
+   * @name deleteCriteria
    * @param {Object} req - requested data.
    * @param {String} req.params._id - solution external id.
    * @param {CSV} req.files.themes - criteria to be deleted from solution.

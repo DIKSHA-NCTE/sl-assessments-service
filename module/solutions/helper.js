@@ -1873,8 +1873,6 @@ module.exports = class SolutionsHelper {
     return new Promise(async (resolve, reject) => {
       try {
 
-
-
           let solutionDocument = await this.solutionDocuments({ externalId : solutionExternalId },["_id","themes"]);
           if( !solutionDocument.length > 0 ) {
             return resolve({
@@ -1903,7 +1901,7 @@ module.exports = class SolutionsHelper {
             });
           })();
 
-          let themeNotChanged,themeTobeUpdated;
+          let themeModified,themeTobeUpdated;
 
           for (let pointerToTheme = 0; pointerToTheme < themes.length; pointerToTheme++) {
 
@@ -1943,7 +1941,7 @@ module.exports = class SolutionsHelper {
                       eachTheme.name == result.name
                     );
               
-              themeNotChanged = themeData.filter(eachTheme => 
+              themeModified = themeData.filter(eachTheme => 
                     eachTheme.name != result.name
                   );
 
@@ -1958,7 +1956,7 @@ module.exports = class SolutionsHelper {
 
                   themeTobeUpdated[0].criteria = criteriaTobeUpdated;
                   csvObject["status"] = messageConstants.apiResponses.CRITERIA_REMOVED;
-                  themeNotChanged.push(themeTobeUpdated[0]);
+                  themeModified.push(themeTobeUpdated[0]);
 
                 }else{
                   csvObject["status"] = messageConstants.apiResponses.CRITERIA_NOT_FOUND;
@@ -2008,7 +2006,7 @@ module.exports = class SolutionsHelper {
 
                   })
 
-                  themeNotChanged.push(themeTobeUpdated[0]);
+                  themeModified.push(themeTobeUpdated[0]);
                 
                 }
               
@@ -2017,7 +2015,7 @@ module.exports = class SolutionsHelper {
               let solutionUpdated = await this.updateSolutionDocument
                   (
                     { externalId: solutionExternalId },
-                    { $set: { themes: themeNotChanged } }
+                    { $set: { themes: themeModified } }
                   )
               
             }  
