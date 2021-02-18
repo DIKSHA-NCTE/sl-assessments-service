@@ -1869,163 +1869,106 @@ module.exports = class SolutionsHelper {
     })
   }
 
-  static deleteCriteria(solutionExternalId, themes, headerSequence) {
+  /**
+   * Delete Criteria From Solution
+   * @method
+   * @name deleteCriteria
+   * @param {String} solutionExternalId - solution ExternalId.
+   * @param {Array} criteriaIds - criteriaIds.
+   * @returns {JSON} 
+   */
+
+  static deleteCriteria(solutionExternalId, criteriaIds) {
     return new Promise(async (resolve, reject) => {
       try {
 
-          let solutionDocument = await this.solutionDocuments({ externalId : solutionExternalId },["_id","themes"]);
-          if( !solutionDocument.length > 0 ) {
-            return resolve({
-              status : httpStatusCode.bad_request.status,
-              message : messageConstants.apiResponses.SOLUTION_NOT_FOUND
-            });
-          }
+        let solutionDocument = await this.solutionDocuments({ externalId : solutionExternalId },["_id","themes"]);
+        if( !solutionDocument.length > 0 ) {
+          return resolve({
+            status : httpStatusCode.bad_request.status,
+            message : messageConstants.apiResponses.SOLUTION_NOT_FOUND
+          });
+        }
 
-          let themeDataExistCheck = solutionDocument[0].themes;
-          if(!themeDataExistCheck.length > 0){
-            return resolve({
-              status : httpStatusCode.bad_request.status,
-              message : messageConstants.apiResponses.THEMES_NOT_FOUND
-            });
-          }
+        let themeData = solutionDocument[0].themes;
+        if(!themeData.length > 0){
+          return resolve({
+            status : httpStatusCode.bad_request.status,
+            message : messageConstants.apiResponses.THEMES_NOT_FOUND
+          });
+        }
 
-          const fileName = `Solution-Criteria-Result`;
-          let fileStream = new FileStream(fileName);
-          let input = fileStream.initStream();
+        for(let pointerToTheme = 0; pointerToTheme < themeData.length; pointerToTheme++ ){
 
-          (async function () {
-            await fileStream.getProcessorPromise();
-            return resolve({
-              isResponseAStream: true,
-              fileNameWithPath: fileStream.fileNameWithPath()
-            });
-          })();
+          let currentTheme = themeData[pointerToTheme];
+          for(let pointerToCriteriaArray = 0; pointerToCriteriaArray < criteriaIds.length; pointerToCriteriaArray++){
 
-          let themeModified,themeTobeUpdated;
+            let criteriaId = criteriaIds[pointerToCriteriaArray];
+            let criteriaData = currentTheme.criteria;
 
-          for (let pointerToTheme = 0; pointerToTheme < themes.length; pointerToTheme++) {
+            if(criteriaData && criteriaData != undefined){
 
-            let solutionDoc = await this.solutionDocuments({ externalId : solutionExternalId },["_id","themes"]);
-            let themeData = solutionDocument[0].themes;
-            let result = {};
-            let csvObject = {};
+              let criteriaTobeUpdated  = criteriaData.filter(eachCriteria => 
+                eachCriteria.criteriaId != criteriaId
+              );
+              currentTheme.criteria = criteriaTobeUpdated;
 
-            csvObject = { ...themes[pointerToTheme] };
-            csvObject["status"] = "";
-            let themesKey = Object.keys(themes[pointerToTheme]);
+            }
 
-            themesKey.forEach(themeKey => {
+            let childrenData = currentTheme.children;
+            if(childrenData && childrenData != undefined){
 
-              let themesSplittedArray = [];
+              childrenData.forEach(childKey => {
 
-              if (themes[pointerToTheme][themeKey] !== "") {
-                themesSplittedArray = themes[pointerToTheme][themeKey].split("###");
-                if(themeKey == "theme"){
-                  result['name'] = themesSplittedArray[0];
-                }
-              }
+                let childCriteria = childKey.criteria;
+                let childData = childKey.children;
 
-              if(themeKey == "criteriaInternalId"){
-                if(themes[pointerToTheme][themeKey] !== ""){
-                  result['criteriaId'] = themesSplittedArray[0];
-                }else{
-                  csvObject["status"] = messageConstants.apiResponses.CRITERIA_ID_MISSING;
-                }
-              }
-             
-            })
+                if(childCriteria &&  childCriteria != undefined){
 
-            if(Object.keys(result).length > 0){
-
-              themeTobeUpdated  = themeData.filter(eachTheme => 
-                      eachTheme.name == result.name
-                    );
-              
-              themeModified = themeData.filter(eachTheme => 
-                    eachTheme.name != result.name
+                  let criteriaTobeUpdated  = childCriteria.filter(eachCriteria => 
+                    eachCriteria.criteriaId != criteriaId
                   );
 
-              if(themeTobeUpdated && themeTobeUpdated.length > 0){
-
-                let criteriaData = themeTobeUpdated[0].criteria;
-                if(criteriaData && criteriaData != undefined){
-
-                  let criteriaTobeUpdated  = criteriaData.filter(eachCriteria => 
-                    eachCriteria.criteriaId != result.criteriaId
-                  );
-
-                  themeTobeUpdated[0].criteria = criteriaTobeUpdated;
-                  csvObject["status"] = messageConstants.apiResponses.CRITERIA_REMOVED;
-                  themeModified.push(themeTobeUpdated[0]);
-
-                }else{
-                  csvObject["status"] = messageConstants.apiResponses.CRITERIA_NOT_FOUND;
+                  childKey.criteria = criteriaTobeUpdated;
                 }
 
-                let childrenData = themeTobeUpdated[0].children;
+                if(childData && childData != undefined){
+                    
+                  childData.forEach(nestedKey => {
 
-                if(childrenData && childrenData != undefined){
+                    let nestedCriteria = nestedKey.criteria;
+                    if(nestedCriteria){
 
-                  childrenData.forEach(childKey => {
-
-                    let childCriteria = childKey.criteria;
-                    let childData = childKey.children;
-
-                    if(childCriteria &&  childCriteria != undefined){
-
-                      let criteriaTobeUpdated  = childCriteria.filter(eachCriteria => 
-                        eachCriteria.criteriaId != result.criteriaId
+                      let nestedCriteriaTobeUpdated  = nestedCriteria.filter(nested => 
+                        nested.criteriaId != criteriaId
                       );
 
-                      childKey.criteria = criteriaTobeUpdated;
-                      csvObject["status"] = messageConstants.apiResponses.CRITERIA_REMOVED;
+                      nestedKey.criteria = nestedCriteriaTobeUpdated;
                       
-                    }else{
-                      csvObject["status"] = messageConstants.apiResponses.CRITERIA_NOT_FOUND;
                     }
-
-                    if(childData && childData != undefined){
-                        
-                      childData.forEach(nestedKey => {
-                        let nestedCriteria = nestedKey.criteria;
-
-                        if(nestedCriteria){
-                          let nestedCriteriaTobeUpdated  = nestedCriteria.filter(nested => 
-                            nested.criteriaId != result.criteriaId
-                          );
-
-                          nestedKey.criteria = nestedCriteriaTobeUpdated;
-                          csvObject["status"] = messageConstants.apiResponses.CRITERIA_REMOVED;
-                          
-                        }else{
-                          csvObject["status"] = messageConstants.apiResponses.CRITERIA_NOT_FOUND;
-                        }
-
-                      })
-                    }
-
                   })
-
-                  themeModified.push(themeTobeUpdated[0]);
-                
                 }
-              
-              }
-
-              let solutionUpdated = await this.updateSolutionDocument
-                  (
-                    { externalId: solutionExternalId },
-                    { $set: { themes: themeModified } }
-                  )
-              
-            }  
-          
-            input.push(csvObject);    
-
+              })
+            }
           }
+        }
 
-          input.push(null);
-        
+        let solutionUpdated = await this.updateSolutionDocument({ externalId: solutionExternalId },
+                          { $set: { themes: themeData } }
+                        );
+
+        let message = "";
+        if(solutionUpdated.success == true){
+          message = messageConstants.apiResponses.CRITERIA_REMOVED;
+        }else{
+          message = messageConstants.apiResponses.CRITERIA_COULD_NOT_BE_DELETED;
+        }
+
+        return resolve({
+          success : true,
+          message : message
+        });
+
       } catch (error) {
         return reject(error);
       }
