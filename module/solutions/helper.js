@@ -1832,24 +1832,33 @@ module.exports = class SolutionsHelper {
             currentSolutionScope.entities = entityIds;
             }
 
-            if( scopeData.roles.length > 0 ) {
+            if( scopeData.roles ) {
               
-              let userRoles = await userRolesHelper.list({
-                code : { $in : scopeData.roles }
-              },{
-                "_id" : 1,
-                "code" : 1
-              });
-  
-              if( !userRoles.length > 0 ) {
-                return resolve({
-                  status : httpStatusCode.bad_request.status,
-                  message : messageConstants.apiResponses.INVALID_ROLE_CODE
+              if( Array.isArray(scopeData.roles) && scopeData.roles.length > 0 ) {
+              
+                let userRoles = await userRolesHelper.list({
+                  code : { $in : scopeData.roles }
+                },{
+                  "_id" : 1,
+                  "code" : 1
                 });
-              }
+    
+                if( !userRoles.length > 0 ) {
+                  return resolve({
+                    status : httpStatusCode.bad_request.status,
+                    message : messageConstants.apiResponses.INVALID_ROLE_CODE
+                  });
+                }
+    
+                currentSolutionScope["roles"] = userRoles;
   
-              currentSolutionScope["roles"] = userRoles;
-
+              } else {
+                if( scopeData.roles === messageConstants.common.ALL_ROLES ) {
+                  currentSolutionScope["roles"] = [{
+                    "code" : messageConstants.common.ALL_ROLES
+                  }]; 
+                }
+              }
             }
           }
 
